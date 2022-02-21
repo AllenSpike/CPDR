@@ -13,7 +13,7 @@ drugcorTest = function(mysRGES, topline, cell_info){
 
 
   auc <- data.table::dcast.data.table(data.table::as.data.table(cell_info$sensp),
-                                      V2 ~ cellid, value.var = "auc_published", fun.aggregate = median)
+                                      cid ~ cellid, value.var = "auc_published", fun.aggregate = median)
   auc = as.data.frame(auc)
 
   res = lapply(seq(length(topline)), function(i){
@@ -22,9 +22,9 @@ drugcorTest = function(mysRGES, topline, cell_info){
     sRGES = mysRGES[[i]]
     sRGES$pert_iname <- toupper(sRGES$pert_iname)
 
-    auc = subset(auc, select = c("V2", x))
-    auc.m = as.data.frame(reshape2::melt(auc, id.vars = "V2"))
-    auc.medianauc = aggregate(auc.m[3], by = list(auc.m$V2),
+    auc = subset(auc, select = c("cid", x))
+    auc.m = as.data.frame(reshape2::melt(auc, id.vars = "cid"))
+    auc.medianauc = aggregate(auc.m[3], by = list(auc.m$cid),
                               FUN = median)
     auc.medianauc$medauc = auc.medianauc$value
     auc.medianauc$value = NULL
@@ -33,8 +33,8 @@ drugcorTest = function(mysRGES, topline, cell_info){
     auc.medianauc <- auc.medianauc[is.finite(auc.medianauc$medauc),
     ]
 
-
-    testdf2 <- merge(sRGES, auc.medianauc, by.x = "V2",
+    sRGES <- merge(sRGES, res_prism, by.x = "pert_iname", by.y = "LINCS_drug_name")
+    testdf2 <- merge(sRGES, auc.medianauc, by.x = "cid",
                      by.y = "DRUGID")
     AUC.cortest <- cor.test(testdf2$sRGES, testdf2$medauc, method='pearson')
     aucpval <- AUC.cortest$p.value
@@ -49,4 +49,3 @@ drugcorTest = function(mysRGES, topline, cell_info){
   return(res)
 
 }
-

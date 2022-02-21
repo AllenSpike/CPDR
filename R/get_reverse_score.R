@@ -103,13 +103,13 @@ get_reverse_score = function(dz_signature = NULL, max_gene_size = 500,
     stop("Either Symbol or log2FoldChange collumn in Disease signature is missing")
   }
 
-  if (is.null(perturbation)){
+  if (is.null(LINCS_data)){
     lincs_signatures = octad.db::lincs_signatures
     lincs_sig_info = octad.db::lincs_sig_info
   } else {
-    lincs_signatures = perturbation$matrix
-    row.names(lincs_signatures) = perturbation$row_id[["pr_gene_symbol"]]
-    lincs_sig_info = perturbation$col_id
+    lincs_signatures = LINCS_data$matrix
+    row.names(lincs_signatures) = LINCS_data$row_id[["pr_gene_symbol"]]
+    lincs_sig_info = LINCS_data$col_id
   }
 
   lincs_sig_info <- subset(lincs_sig_info, id %in% colnames(lincs_signatures))
@@ -209,3 +209,4 @@ get_reverse_score = function(dz_signature = NULL, max_gene_size = 500,
   gc()
   return(pred_merged)
 }
+

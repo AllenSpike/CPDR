@@ -24,7 +24,7 @@ select_db = function(Assay, cmat, MSI_status = NULL, driver_gene = NULL,
                      removeBatchEffect = TRUE, OrgDb){
 
   sample_s = NULL
-  sampleID = octad.db$phenoDF$sample.id
+  sampleID = octad.db::phenoDF$sample.id
   clinical <- as.data.frame(Assay@colData@listData)
   mat <- SummarizedExperiment::assay(Assay,"mrna_seq_v2_rsem")
   mut <- SummarizedExperiment::assay(Assay,"mutations")

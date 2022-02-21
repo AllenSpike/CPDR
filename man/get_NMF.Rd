@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_NMF.R
 \name{get_NMF}
 \alias{get_NMF}
-\title{Implement transcriptome subtyping}
+\title{Implement transcriptome subtyping by NMF method}
 \usage{
 get_NMF(
   mat,
@@ -38,5 +38,5 @@ If method='PCA', the value of principal component is selected.}
 The NMF subtyping result.
 }
 \description{
-Implement transcriptome subtyping
+Implement transcriptome subtyping by NMF method
 }

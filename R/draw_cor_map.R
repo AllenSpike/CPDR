@@ -13,14 +13,14 @@ draw_cor_map = function(mysRGES, topline, cell_info){
   message('data preprocess......')
   sensp = cell_info$sensp
   auc <- data.table::dcast.data.table(data.table::as.data.table(sensp),
-                                      V2 ~ cellid, value.var = "auc_published", fun.aggregate = median)
+                                      cid ~ cellid, value.var = "auc_published", fun.aggregate = median)
   auc = as.data.frame(auc)
 
   top = lapply(names(table(topline)), function(j){
 
-    AUC = subset(auc, select = c("V2", j))
-    auc.m = as.data.frame(reshape2::melt(AUC, id.vars = "V2"))
-    auc.medianauc = aggregate(auc.m[3], by = list(auc.m$V2),
+    AUC = subset(auc, select = c("cid", j))
+    auc.m = as.data.frame(reshape2::melt(AUC, id.vars = "cid"))
+    auc.medianauc = aggregate(auc.m[3], by = list(auc.m$cid),
                               FUN = median)
     auc.medianauc$medauc = auc.medianauc$value
     auc.medianauc$value = NULL
@@ -36,8 +36,8 @@ draw_cor_map = function(mysRGES, topline, cell_info){
 
   })
   names(top) = names(table(topline))
-
-  testdf <- merge(mysRGES, top[[1]][2], by.x = "V2",
+  mysRGES <- merge(mysRGES, res_prism, by.x = "pert_iname", by.y = "LINCS_drug_name")
+  testdf <- merge(mysRGES, top[[1]], by.x = "cid",
                   by.y = "DRUGID")
 
   dot <- ggplot(data = testdf, aes(x = sRGES, y = medauc)) +
@@ -77,5 +77,4 @@ draw_cor_map = function(mysRGES, topline, cell_info){
   print(dot, vp = vplayout(1:3,1))
   print(box, vp = vplayout(4,1))
 }
-
 

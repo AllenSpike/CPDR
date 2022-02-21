@@ -16,8 +16,8 @@ get_puretumor = function(subgroup, pp = NULL, minkappa = NULL, loglevel = "INFO"
     S1model <- suppressWarnings(ISOpureR::ISOpure.step1.CPE(subgroup[[i]]$case+1, subgroup[[i]]$control+1, PP = pp, MIN_KAPPA = minkappa, logging.level = loglevel))
     S2model <- suppressWarnings(ISOpureR::ISOpure.step2.PPE(subgroup[[i]]$case+1, subgroup[[i]]$control+1, S1model, MIN_KAPPA = minkappa, logging.level = loglevel))
     tumor <- S2model$cc_cancerprofiles
-    dimnames(tumor) <- dimnames(subgroup[[1]])
-    data = list(tumor,subgroup[[2]])
+    dimnames(tumor) <- dimnames(subgroup[[i]]$case)
+    data = list(tumor,subgroup[[i]]$control)
     names(data) = c('case_puify','control')
     return(data)
   }

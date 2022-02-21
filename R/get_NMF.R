@@ -1,4 +1,4 @@
-#' Implement transcriptome subtyping
+#' Implement transcriptome subtyping by NMF method
 #'
 #' @param mat Profiles of selected TCGA data set.
 #' @param method Method for feature selection, optional 'MAD', 'VAR' and 'PCA' ('MAD' by default).
@@ -13,9 +13,8 @@
 #'
 #' @return The NMF subtyping result.
 #' @export
-#' @importFrom NMF nmf consensusmap
-#' @importFrom CancerSubtypes silhouette_SimilarityMatrix
-#' @importFrom grDevices palette
+#' @importFrom  NMF nmf consensusmap  predict
+#' @importFrom  CancerSubtypes silhouette_SimilarityMatrix
 
 
 get_NMF = function(mat, method='MAD', value=1500, clusterNum=NULL, rank=2:6, nrun=30,
@@ -87,7 +86,7 @@ get_NMF = function(mat, method='MAD', value=1500, clusterNum=NULL, rank=2:6, nru
     clusterNum <- num[which.max(res[["measures"]][["cophenetic"]])]
   }
 
-  message('... excuting nmf ...')
+  message('... Excuting nmf ...')
   if (is.list(selectmat)) {
     temp = NULL
     for (i in 1:length(selectmat)) {

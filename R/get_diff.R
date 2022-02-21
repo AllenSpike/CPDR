@@ -31,8 +31,14 @@ get_diff = function(data = NULL,DE_method = "edgeR",normalize_samples = TRUE,
     d = cbind(log2(d[[i]]$case_puify[gene,] + 1),log2(d[[i]]$control[gene,] + 1))
     res_group <- octad::diffExp(case_id,control_id,source='side',expSet=d,
                                 DE_method = de, k = k, n_topGenes = nt, normalize_samples = ns,
-                                output=T, annotate=T, parallel_cores = pc)
-    res_group <- dplyr::arrange(res_group, log2FoldChange)
+                                output=F, annotate=F, parallel_cores = pc)
+    merged_gene_info = octad.db::merged_gene_info
+    merged_gene_info$ensembl <- as.vector(merged_gene_info$ensembl)
+    merged_gene_info$V1 = NULL
+    merged_gene_info$Symbol = merged_gene_info$gene
+    merged_gene_info$gene = NULL
+    res_group <- left_join(res_group, merged_gene_info, by = c(identifier = "Symbol_autho"))
+    res_group <- arrange(res_group, log2FoldChange)
 
     res_group <- subset(res_group,abs(log2FoldChange) > th1&pvalue < th2&padj < th3)
     return(res_group)
@@ -44,6 +50,4 @@ get_diff = function(data = NULL,DE_method = "edgeR",normalize_samples = TRUE,
   names(res) <- names(data)
   return(res)
 }
-
-
 

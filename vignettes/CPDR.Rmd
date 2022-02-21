@@ -10,9 +10,6 @@ vignette: >
 ### Ruzhen Chen 
 First edited on 2022.2.17
 
-
-
-
 # Package overview
 The transcriptome profiling, which contain drivers of cancer development, has been demonstrated its value in guiding personalized tumor therapy. The cmap approach based on the transcriptome profiling of human tumor cell lines has been successfully used in drug repositioning and discovery of new modes of drug action. However, there is still a lack of personalized drug recommendation tools based on the cmap approach. To fill the gap , here we propose a strategy based on the cmap method using individual transcriptome profiling as input, and develop the user-friendly R package CDPR. CDPR consists of three steps: 
 1) Identification of robust individual disease signals. 
@@ -23,20 +20,16 @@ There are three features in this strategy:
 2) We execute profile purification for samples with high infiltration of non-cancerous cells.
 3) We integrate LINCS and PRISM, the largest available pharmacogenomic datasets, to support drug efficacy assessment at the cell line level.
 
-
-
-
 # Workflow 
-We demonstrate the pipeline of CDPR with the aid of a colorectal cancer dataset from GEO (GSE164541) ,containing gene expression profiles of 5 patients.
+We demonstrate the pipeline of CDPR with the aid of a colorectal cancer dataset from GEO (GSE164541), containing gene expression profiles of 5 patients.
 
 ## 1. Download data
 ### 1.1 Clinical query samples (GSE164541)
 ```{r eval=FALSE,message=FALSE,warning=FALSE}
 
+library(CPDR)
 library(GEOquery)
-library(clusterProfiler)
 library(org.Hs.eg.db)
-library(dplyr)
 
 getGEOSuppFiles('GSE164541', makeDirectory = TRUE, fetch_files = TRUE)
 clinical <- read.csv("./GSE164541/GSE164541_ANT_count.csv.gz")
@@ -49,21 +42,21 @@ clinical <- clinical[!duplicated(clinical$SYMBOL),]
 row.names(clinical) <- clinical$SYMBOL
 clinical_profile_set <- clinical[,grep("PT",colnames(clinical))]
 
-
 ```
+
 
 ### 1.2 Background data
 ``` {r eval=FALSE,message=FALSE,warning=FALSE}
-library(CPDR)
 
 download_db(pset = c('CCLE','PRISM'),
             tset = 'coadread',
             nset = 'GTEX',
+            saveDir = '.',
             verbose = T)
 
 # read downloaded TCGA dataset
-exdir <- untarStudy("./CPDR_db/TCGA/25dc53d4417_coadread_tcga_pan_can_atlas_2018.tar.gz")
-coadread <- loadStudy(exdir)
+exdir <- cBioPortalData::untarStudy("./CPDR_db/TCGA/25dc53d4417_coadread_tcga_pan_can_atlas_2018.tar.gz")
+coadread <- cBioPortalData::loadStudy(exdir)
 
 ```
 
@@ -86,95 +79,121 @@ gc()
 ```
 
 ### 2.2 NMF subtyping
-``` {r eval=FALSE,message=FALSE,warning=FALSE}
+``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold"}
 
 result = get_NMF(mat = pmat$mat,
-                 seed = 3211232,
+                 method = 'MAD',
                  clusterNum = 4, 
-                 doPlot = T,  
-                 nrun = 100)
-gc()
+                 seed = 3211232,
+                 nrun = 10,
+                 doPlot = T)
 
 ```
+![Fig1. NMF subtyping result.](D:/3R/CPDR/vignettes/images/NMF.png)
 
 ### 2.3 Identify subgroups
-``` {r eval=FALSE,message=FALSE,warning=FALSE}
+``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold"}
 
-subgroup = get_subgroup(cmapt = pmat$cmat, 
+subgroup = get_subgroup(cmat = pmat$cmat, 
                         mat = pmat$mat, 
-                        subtyp = result, 
+                        subtype = result, 
                         k = 10,
                         biopsy = "COLON",
                         adjacent = F,
-                        doplot = T)
-gc()
+                        doplot = T,
+                        db.path = '.',
+                        OrgDB = org.Hs.eg.db)
 
 
 ```
+![Fig2. The heatmap of Spearman correlation coefficients between query samples and subtypes.](D:/3R/CPDR/vignettes/images/subgroups.png)
 
 ### 2.4 Estimate non-cancerous infiltration
-``` {r eval=FALSE,message=FALSE,warning=FALSE}
+``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold"}
 
 es = get_estimateScore(mat = pmat$mat, subtype=result, doplot = T)
 
 ```
+![Fig3. The non-cancerous cell infiltration heatmap of colorectal cancer subtypes.](D:/3R/CPDR/vignettes/images/non-cancerous infiltration.png)
 
-### 2.5 Purify subgroups
-``` {r eval=FALSE,message=FALSE,warning=FALSE}
+### 2.5 Purify subgroups 
+``` {r eval=FALSE,message=FALSE,warning=FALSE,results = "asis"}
+# subgroup simple version
+subgroup_simple = lapply(subgroup, function(x){
+  lapply(x, function(y){
+    gene = intersect(row.names(y),row.names(octad.db::lincs_signatures))
+    return(y[gene,])
+  })
+})
 
-purify_data = get_puretumor(subgroup = subgroup)
-gc()
+head(subgroup_simple[[1]]$case)
+
+```
+```{r echo=FALSE}
+load('D:/3R/CPDR/vignettes/images/subgroup_simple.RData')
+knitr::kable(head(subgroup_simple[[1]]$case), 
+             caption = "Subgroup of PT1")
+```
+
+``` {r eval=FALSE,message=TRUE,warning=TRUE}
+purify_data = get_puretumor(subgroup = subgroup_simple)
 
 ```
 
 ### 2.6 Differential expression analysis
 ``` {r eval=FALSE,message=FALSE,warning=FALSE}
-
 signature = get_diff(data = purify_data, 
                      DE_method = 'limma', 
                      normalize_samples = TRUE, 
-                    threshold_log2foldchange = 2.5, 
-                    threshold_pval = 1, 
-                    threshold_adjpval = 0.001)
-gc()
+                     threshold_log2foldchange = 2, 
+                     threshold_pval = 1, 
+                     threshold_adjpval = 0.05)
+
+head(signature[[1]])
 
 ```
 
+```{r echo=FALSE}
+load('D:/3R/CPDR/vignettes/images/signature.RData')
+knitr::kable(head(signature[[1]]), 
+             caption = "Robust inidividual disease signals of PT1")
+```
 
 ## 3. Screening of candidate agents by reversing signals
 ``` {r eval=FALSE,message=FALSE,warning=FALSE}
-
 sRGES = lapply(signature, function(x, LINCS){
   return(get_reverse_score(dz_signature = x,
                            max_gene_size=500,
                            permutations = 10000,
                            LINCS_data = LINCS)) 
   },LINCS = NULL)
-
-names(sRGES) = names(signature)
 gc()
+
+head(sRGES[[1]])
 
 ```
 
+```{r echo=FALSE}
+load('D:/3R/CPDR/vignettes/images/sRGES.RData')
+knitr::kable(head(sRGES[[1]]), 
+             caption = "Candidate agents for PT1")
+```
 ## 4. Assessment of drug efficacy
 ### 4.1 Calculate inidividual-related cell lines
 ``` {r eval=FALSE,message=FALSE,warning=FALSE}
-
 cell_info = get_cell(cmat = pmat$cmat,
                      db.path = './CPDR_db/Pharmacogenomic',
                      removeBatchEffect = FALSE,
                      orgDB = org.Hs.eg.db)
-gc()
 
 topline = c('HCC-56','HCC-56','SNU-61', 'HCC-56', 'CL-34')
 
 ```
 
 ### 4.2 Evaluate drug effectiveness at Cell-line level
-``` {r eval=FALSE,message=FALSE,warning=FALSE}
-
+``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold",fig.height = 4, fig.width = 4}
 cor = drugcorTest(mysRGES=sRGES, topline = topline, cell_info = cell_info)
 draw_cor_map(sRGES[[1]],topline[1], cell_info = cell_info)
 
 ```
-
+![Fig4. The predicted drugs efficacy test in PT1.](D:/3R/CPDR/vignettes/images/PT1.png){width=75%}

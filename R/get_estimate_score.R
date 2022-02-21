@@ -38,7 +38,7 @@ get_estimateScore = function(mat, subtype, gs = NULL, doplot = TRUE) {
 
   annot = table(gene_set$Annot)
   n = length(annot)
-  ls1 = lapply(seq(n), function(i){gsub('^ ','',rownames(gsva_matrix1))%in%unique(gene_set$`Cell type`[which(gene_set$Annot == annot[i])])})
+  ls1 = lapply(seq(n), function(i){gsub('^ ','',rownames(gsva_matrix1))%in%unique(gene_set$`Cell type`[which(gene_set$Annot == names(annot[i]))])})
   ls2 = lapply(ls1, function(i){gsva_matrix1[i,]})
   gsva_matrix1 <- BiocGenerics::Reduce(rbind, ls2)
 
@@ -49,7 +49,7 @@ get_estimateScore = function(mat, subtype, gs = NULL, doplot = TRUE) {
 
   annotation_col <- data.frame(group=subtype$group,
                                patient=colnames(subtype$distanceMatrix))
-  annotation_col <- dplyr::arrange(annotation_col,group)
+  annotation_col <- arrange(annotation_col,group)
   nor_gsva_matrix1 <- nor_gsva_matrix1[,annotation_col$patient]
   annotation_col = data.frame(group=as.character(annotation_col$group))
   rownames(annotation_col)<-colnames(nor_gsva_matrix1)
@@ -59,7 +59,8 @@ get_estimateScore = function(mat, subtype, gs = NULL, doplot = TRUE) {
     gb = group_by(gene_set,Annot)
     gr = as.data.frame(dplyr::summarise(gb,x=length(unique(`Cell type`))))
     row.names(gr) = gr$Annot
-    gr = gr[annot,]
+    gr = gr[names(annot),]
+    grid.newpage()
     pheatmap::pheatmap(nor_gsva_matrix1,
                        show_colnames = F,
                        cluster_rows = F,
