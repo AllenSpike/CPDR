@@ -12,6 +12,7 @@ get_subgroup(
   biopsy = NULL,
   adjacent = FALSE,
   doplot = TRUE,
+  OrgDB = NULL,
   db.path = tempdir()
 )
 }
@@ -31,6 +32,8 @@ get_subgroup(
 \item{doplot}{A logical value. If TRUE, draw the heatmap of Spearman correlation coefficients between query samples and subtypes.}
 
 \item{db.path}{A character(1) string with the folder path where the background data was saved.}
+
+\item{OrgDb}{The human annotation db for ID convert.}
 }
 \value{
 Profiles of subgoups and control groups for each clinical query sample.
