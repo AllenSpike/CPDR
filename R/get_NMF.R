@@ -1,12 +1,12 @@
-#' Implement transcriptome subtyping by NMF method
+#' Transcriptomic subtyping by NMF method
 #'
-#' @param mat Profiles of selected TCGA data set.
+#' @param mat Preprocessed profiles of TCGA dataset.
 #' @param method Method for feature selection, optional 'MAD', 'VAR' and 'PCA' ('MAD' by default).
 #' @param value A numeric value for biological feature selection.
 #' If method='MAD' or 'VAR', the top number of value features are selected.
 #' If method='PCA', the value of principal component is selected.
-#' @param clusterNum Number of subtypes for the data set.
-#' @param rank A numeric vector for the estimation of clusterNum. It will be overrided if clusterNum is not NULL.
+#' @param clusterNum Number of subtypes for the dataset.
+#' @param rank A numeric vector for the estimation of clusterNum. It will be overrided if clusterNum is given.
 #' @param nrun Number of runs to perform NMF. A default of 30 runs are performed, allowing the computation of a consensus matrix that is used in selecting the best result for cancer subtypes identification as Consensus Clustering method.
 #' @param seed A numeric value is used to seed the random number generator before generating a random starting point.
 #' @param doPlot A logical value. If true, draw the heatmap for the distance matrix with samples ordered to form clusters.

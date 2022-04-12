@@ -13,12 +13,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Cancer Drug Personalized Recommendation (CDPR)
+# Cancer Personalized Drug Recommendation (CPDR)
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-A recommendation system of personalized drugs for patients with cancer by reversing robust individual disease signatures
+A recommendation tool of personalized drugs for patients with cancer by reversing individual disease signatures
 
 ## Installation
 
@@ -40,7 +40,7 @@ if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
 }
 
 ```
-Now you can install the development version of CPDR  with:
+Now you can install the development version of CPDR with:
 
 ``` r
 install.packages('devtools')
@@ -48,7 +48,7 @@ devtools::install_github("AllenSpike/CPDR")
 
 ```
 ## Additional data
-By default, CPDR uses LINCS_978 from octad.db. To get reliable results, users can download the LINCS_all_processed data manually from https://zenodo.org/record/5880026#.YgZos9--uUl.
+By default, CPDR uses LINCS_978 from octad.db. To acquire reliable results, It is suggested to download the LINCS_all_processed data (6.5Gb) manually from https://zenodo.org/record/5880026#.YgZos9--uUl.
 
 ## Example
-The vignette shows the usecase of screening effective compounds targeting inidividual patient with colorectal cancer.
+The vignette shows the usecase of screening effective compounds targeting individual patient with colorectal cancer.

@@ -1,9 +1,9 @@
-#' Identify subgroup and control group for each clinical query sample
+#' Identifing subgroup and control group for each clinical patient
 #'
-#' @param cmat The RNA-seq count expression profiles of clinical query samples.
-#' @param mat Profiles of selected TCGA data set.
-#' @param subtype The NMF subtyping result.
-#' @param k The subgroup size (10 by default. Optional 3, 5, 10.)
+#' @param cmat Preprocessed profiles of clinical patients.
+#' @param mat Preprocessed Profiles of TCGA dataset.
+#' @param subtype Subtyping result.
+#' @param k Subgroup size (10 by default. Optional 3, 5, 10.)
 #' @param biopsy Tissue sources of the control group (Use View(GTEX_set) for optional 51 biopsy.sites. By default set to NULL, which will select control group based on distance between TCGA and GTEX samples.)
 #' @param adjacent A logical value. By default set to FALSE. If TRUE, only tissue with sample.type 'adjacent' from GTEX_set would be used instead of 'normal'.
 #' @param doplot A logical value. If TRUE, draw the heatmap of Spearman correlation coefficients between query samples and subtypes.

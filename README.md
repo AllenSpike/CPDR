@@ -1,13 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Cancer Drug Personalized Recommendation (CDPR)
+# Cancer Personalized Drug Recommendation (CPDR)
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-A recommendation system of personalized drugs for patients with cancer
-by reversing robust individual disease signatures
+A recommendation tool of personalized drugs for patients with cancer by
+reversing individual disease signatures
 
 ## Installation
 
@@ -39,11 +39,11 @@ devtools::install_github("AllenSpike/CPDR")
 
 ## Additional data
 
-By default, CPDR uses LINCS\_978 from octad.db. To get reliable results,
-users can download the LINCS\_all\_processed data manually from
-<https://zenodo.org/record/5880026#.YgZos9--uUl>.
+By default, CPDR uses LINCS\_978 from octad.db. To acquire reliable
+results, It is suggested to download the LINCS\_all\_processed data
+(6.5Gb) manually from <https://zenodo.org/record/5880026#.YgZos9--uUl>.
 
 ## Example
 
 The vignette shows the usecase of screening effective compounds
-targeting inidividual patient with colorectal cancer.
+targeting individual patient with colorectal cancer.

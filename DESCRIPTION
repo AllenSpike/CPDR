@@ -2,7 +2,7 @@ Type: Package
 Package: CPDR
 Title: Cancer Drug Personalized Recommendation (CDPR)
 Version: 0.1.0.9000
-Author: Ruzhen Chen
+Author: Ruzhen Chen     
 Maintainer: Ruzhen Chen <spikeallen@163.com>
 Description: CDPR propose a strategy based on the cmap method using individual transcriptome profiling as input.
 License: MIT + file LICENSE

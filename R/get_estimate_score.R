@@ -1,7 +1,7 @@
-#' Evaluate non-cancer cell infiltration in each subtype
+#' Evaluatting non-cancer cell infiltration of each subtype
 #'
-#' @param mat Profiles of selected TCGA data set.
-#' @param subtype The NMF subtyping result.
+#' @param mat Preprocessed Profiles of TCGA dataset.
+#' @param subtype Subtyping result.
 #' @param gs A data.frame of 3 columns with Metagene, Cell_type and Annot.
 #' @param doplot A logical value. If TRUE, draw the heatmap of non-cancer cell infiltration.
 #'

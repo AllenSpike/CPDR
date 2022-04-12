@@ -7,7 +7,7 @@
 select_db(
   Assay,
   cmat,
-  MSI_status = NULL,
+  MS_status = NULL,
   driver_gene = NULL,
   MUT_status = NULL,
   CNA_status = NULL,
@@ -22,7 +22,7 @@ select_db(
 
 \item{cmat}{The RNA-seq count expression profiles of clinical query samples.}
 
-\item{MSI_status}{Filter TCGA samples with the MSI status (MSI or MSS).}
+\item{MS_status}{Filter TCGA samples with the MSI status (MSI or MSS).}
 
 \item{driver_gene}{A character with the driver gene symbol.}
 

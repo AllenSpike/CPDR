@@ -1,17 +1,17 @@
-#'  Preprocess transcriptome profiling and filter TCGA samples
+#'  Data preprocessing
 #'
-#' @param Assay The TCGA data set of selected cancer type.
-#' @param cmat The RNA-seq count expression profiles of clinical query samples.
-#' @param MSI_status Filter TCGA samples with the MSI status (MSI or MSS).
+#' @param Assay The TCGA dataset downloaded by download_db.
+#' @param cmat The RNA-seq count data of clinical patients.
+#' @param MS_status Filter TCGA samples with the MSI status (MSI or MSS).
 #' @param driver_gene  A character with the driver gene symbol.
 #' @param MUT_status Filter TCGA samples with the MUT status of driver gene (MUT or NULL).
-#' @param CNA_status Filter TCGA samples with the CNA status of driver gene (AMP, GAIN, HETLOSS, HOMDEL).
+#' @param CNA_status Filter TCGA samples with the CNA status of driver gene (AMP, GAIN, HETLOSS, or HOMDEL).
 #' @param geneList A data.frame of 2 column with gene and status. Only used in multiple driver genes.
-#' @param minSampleSize Minimal size of the outpputted samples (10 by default).
-#' @param removeBatchEffect Remove batch effects from expression data using limma (TRUE by default).
+#' @param minSampleSize Minimal size of the output samples (10 by default).
+#' @param removeBatchEffect Remove batch effects between the TCGA dataset and the clinical patients (TRUE by default).
 #' @param OrgDb The human annotation db for ID convert.
 #'
-#' @return A large list with processed profiles of clinical query samples (cmat), and processed and filtered profiles of selected TCGA data set (mat).
+#' @return A list with preprocessed profiles of the clinical patients (cmat), and preprocessed profiles of the TCGA dataset (mat).
 #' @export
 #' @importFrom SummarizedExperiment assay
 #' @importFrom clusterProfiler bitr
@@ -19,7 +19,7 @@
 #' @import dplyr
 #' @import octad.db
 
-select_db = function(Assay, cmat, MSI_status = NULL, driver_gene = NULL,
+select_db = function(Assay, cmat, MS_status = NULL, driver_gene = NULL,
                      MUT_status = NULL, CNA_status = NULL, geneList = NULL, minSampleSize = 10,
                      removeBatchEffect = TRUE, OrgDb){
 
@@ -39,18 +39,18 @@ select_db = function(Assay, cmat, MSI_status = NULL, driver_gene = NULL,
   if (sum(is.na(suppressWarnings(as.numeric(row.names(cmat))))) == 0 | sum(grepl('^ENSG',row.names(cmat))) > 0) {
     stop('Row names of cmat should be SYMBOL.')
   }
-  if (!is.null(MSI_status)){
-    if (MSI_status == 'MSI') {
+  if (!is.null(MS_status)){
+    if (MS_status == 'MSI') {
       sample_s <- clinical$PATIENT_ID[clinical$MSI_SCORE_MANTIS > 0.6]
     }
-    if (MSI_status == 'MSS') {
+    if (MS_status == 'MSS') {
       sample_s <- clinical$PATIENT_ID[clinical$MSI_SCORE_MANTIS < 0.4]
     }
     if (length(sample_s) < minSampleSize) {
       if (length(sample_s) == 0) {
-        stop(paste0('No patients with ',MSI_status))
+        stop(paste0('No patients with ',MS_status))
       }
-      warning(paste0('Insufficient patients with ',MSI_status))
+      warning(paste0('Insufficient patients with ',MS_status))
     }
   }
 

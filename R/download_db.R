@@ -1,8 +1,8 @@
-#' Download background data
+#' Background data download
 #'
-#' @param pset The Pharmacogenomic dataset name. View(pharmaco_sets) for currently available datasets.
+#' @param pset The Pharmacogenomic dataset name. View(pharmaco_sets) for available datasets.
 #' @param tset The TCGA cancer type name. View(TCGA_sets) for currently available cancer types.
-#' @param nset The normal tissue dataset name. Currently available datasets: GTEX.
+#' @param nset The normal tissue dataset name. Currently available dataset: GTEX.
 #' @param saveDir A character(1) string with the folder path where the background data should be saved. Defaults to tempdir(). Will create directory if it does not exist.
 #' @param verbose bool Should status messages be printed during download. Defaults to TRUE.
 #'
