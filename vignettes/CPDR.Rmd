@@ -2,7 +2,10 @@
 title: "Cancer Personalized Drug Recommendation (CPDR)"
 author: "Ruzhen Chen"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
 vignette: >
   %. VignetteIndexEntry{CPDR}
   %. VignetteEngine{knitr::rmarkdown}
