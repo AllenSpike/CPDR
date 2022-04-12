@@ -34,7 +34,7 @@ Now you can install the development version of CPDR with:
 
 ``` r
 install.packages('devtools')
-devtools::install_github("AllenSpike/CPDR")
+devtools::install_github("AllenSpike/CPDR", build_vignettes = TRUE)
 ```
 
 ## Additional data
@@ -45,5 +45,4 @@ results, It is suggested to download the LINCS\_all\_processed data
 
 ## Example
 
-The vignette shows the usecase of screening effective compounds
-targeting individual patient with colorectal cancer.
+A Example shows the usecase of screening effective compounds targeting individual patient with colorectal cancer. Please use browseVignettes("CPDR") to see the example.
