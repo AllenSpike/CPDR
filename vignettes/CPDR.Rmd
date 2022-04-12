@@ -1,5 +1,7 @@
 ---
 title: "Cancer Personalized Drug Recommendation (CPDR)"
+author: "Ruzhen Chen"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %. VignetteIndexEntry{CPDR}
@@ -8,8 +10,6 @@ vignette: >
 ---
 
 ### Ruzhen Chen 
-First edited on 2022.2.17
-Second edited on 2022.3.22
 
 # Package overview
 Due to cancer heterogeneity, only some patients can benefit from drug therapy. The personalized drug use is important for improving the treatment response rate of cancer patients. Patient transcriptome has recently demonstrated its value in guiding personalized drug use, and Connectivity map (CMAP) is a reliable computational approach for drug recommendation. However, there is still no personalized drug recommendation tool based on patient transcriptomic profiles and CMAP. To fill this gap, here we proposed such a feasible workflow and a user-friendly R package - Cancer Personalized Drug Recommendation (CPDR). CPDR has three features. 1) It identifies the individual disease signature by using the patient subgroup with transcriptomic profiles similar to that of the input patient. 2) Transcriptomic profile purification is supported for the subgroup with high infiltration of non-cancerous cells.  3) It supports in silico drug efficacy assessment using drug sensitivity data of cancer cell lines.
@@ -83,7 +83,6 @@ result = get_NMF(mat = pmat$mat,
                  doPlot = T)
 
 ```
-![Fig1. NMF subtyping result.](D:/3R/00CPDR/vignettes/images/NMF.png)
 
 ### 2.3 Identification of subgroups
 ``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold"}
@@ -100,7 +99,6 @@ subgroup = get_subgroup(cmat = pmat$cmat,
 
 
 ```
-![Fig2. The heatmap of Spearman correlation coefficients between query samples and subtypes.](D:/3R/00CPDR/vignettes/images/subgroups.png)
 
 ### 2.4 Estimation of non-cancerous infiltration
 ``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold"}
@@ -108,7 +106,6 @@ subgroup = get_subgroup(cmat = pmat$cmat,
 es = get_estimateScore(mat = pmat$mat, subtype=result, doplot = T)
 
 ```
-![Fig3. The non-cancerous cell infiltration heatmap of colorectal cancer subtypes.](D:/3R/00CPDR/vignettes/images/non-cancerous infiltration.png)
 
 ### 2.5 Purification of subgroups 
 ``` {r eval=FALSE,message=FALSE,warning=FALSE,results = "asis"}
@@ -122,11 +119,6 @@ subgroup_simple = lapply(subgroup, function(x){
 
 head(subgroup_simple[[1]]$case)
 
-```
-```{r echo=FALSE}
-load('D:/3R/00CPDR/vignettes/images/subgroup_simple.RData')
-knitr::kable(head(subgroup_simple[[1]]$case), 
-             caption = "Subgroup of PT1")
 ```
 
 ``` {r eval=FALSE,message=TRUE,warning=TRUE}
@@ -143,14 +135,6 @@ signature = get_diff(data = purify_data,
                      threshold_pval = 1, 
                      threshold_adjpval = 0.05)
 
-head(signature[[1]])
-
-```
-
-```{r echo=FALSE}
-load('D:/3R/00CPDR/vignettes/images/signature.RData')
-knitr::kable(head(signature[[1]]), 
-             caption = "Inidividual disease signals of PT1")
 ```
 
 ## 3. Screening of candidate agents by reversing signals
@@ -163,15 +147,8 @@ sRGES = lapply(signature, function(x, LINCS){
   },LINCS = NULL)
 gc()
 
-head(sRGES[[1]])
-
 ```
 
-```{r echo=FALSE}
-load('D:/3R/00CPDR/vignettes/images/sRGES.RData')
-knitr::kable(head(sRGES[[1]]), 
-             caption = "Candidate agents for PT1")
-```
 ## 4. Assessment of drug efficacy
 ### 4.1 Calculation of inidividual-related cell lines
 ``` {r eval=FALSE,message=FALSE,warning=FALSE}
@@ -188,4 +165,9 @@ cor = drugcorTest(mysRGES=sRGES, topline = topline, cell_info = cell_info)
 draw_cor_map(sRGES[[1]],topline[1], cell_info = cell_info)
 
 ```
-![Fig4. The predicted drugs efficacy test in PT1.](D:/3R/00CPDR/vignettes/images/PT1.png){width=75%}
+
+# Session information
+Here is the output of sessionInfo on the system where this document was compiled:
+```{r eval=TRUE} 
+sessionInfo()
+```
