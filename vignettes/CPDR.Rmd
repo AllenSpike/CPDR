@@ -2,14 +2,18 @@
 title: "Cancer Personalized Drug Recommendation (CPDR)"
 author: "Ruzhen Chen"
 date: "`r Sys.Date()`"
-output: 
+output:
+  word_document:
+    toc: yes
+    toc_depth: '2'
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
   html_document:
-    toc: true
+    toc: yes
     toc_depth: 2
-vignette: >
-  %. VignetteIndexEntry{CPDR}
-  %. VignetteEngine{knitr::rmarkdown}
-  %. VignetteEncoding{UTF-8}
+vignette: |
+  %. VignetteIndexEntry{CPDR} %. VignetteEngine{knitr::rmarkdown} %. VignetteEncoding{UTF-8}
 ---
 
 ### Ruzhen Chen 
@@ -39,8 +43,14 @@ clinical <- clinical[!duplicated(clinical$SYMBOL),]
 row.names(clinical) <- clinical$SYMBOL
 clinical_profile_set <- clinical[,grep("PT",colnames(clinical))]
 
+head(clinical_profile_set)
 ```
 
+```{r echo=FALSE}
+load('D:/3R/00CPDR/vignettes/images/clinical_profile_set.RData')
+knitr::kable(head(clinical_profile_set),
+             caption = "Clinical patients' RNA-seq count data",digits = 0.1)
+```
 
 ### 1.2 Background data
 ``` {r eval=FALSE,message=FALSE,warning=FALSE}
@@ -52,13 +62,14 @@ download_db(pset = c('CCLE','PRISM'), # pharmacogenetic data
             verbose = T)
 
 # read downloaded TCGA dataset
-exdir <- cBioPortalData::untarStudy("./CPDR_db/TCGA/25dc53d4417_coadread_tcga_pan_can_atlas_2018.tar.gz")
+exdir <- cBioPortalData::untarStudy("./CPDR_db/TCGA/
+                                    25dc53d4417_coadread_tcga_pan_can_atlas_2018.tar.gz")
 coadread <- cBioPortalData::loadStudy(exdir)
 
 ```
 
 
-## 2. Identification of robust individual disease signals
+## 2. Identification of individual disease signals
 ### 2.1 Preprocessing
 ``` {r eval=FALSE,message=FALSE,warning=FALSE}
 
@@ -74,8 +85,7 @@ pmat = select_db(Assay = coadread,
 gc()
 
 ```
-
-### 2.2 NMF subtyping
+### 2.2 Subtyping
 ``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold"}
 
 result = get_NMF(mat = pmat$mat,
@@ -86,6 +96,7 @@ result = get_NMF(mat = pmat$mat,
                  doPlot = T)
 
 ```
+![NMF subtyping result](D:/3R/00CPDR/vignettes/images/NMF.png)
 
 ### 2.3 Identification of subgroups
 ``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold"}
@@ -102,6 +113,7 @@ subgroup = get_subgroup(cmat = pmat$cmat,
 
 
 ```
+![The heatmap of Spearman correlation coefficients between query samples and subtypes](D:/3R/00CPDR/vignettes/images/subgroups.png)
 
 ### 2.4 Estimation of non-cancerous infiltration
 ``` {r eval=FALSE,message=FALSE,warning=FALSE,fig.show = "hold"}
@@ -109,6 +121,8 @@ subgroup = get_subgroup(cmat = pmat$cmat,
 es = get_estimateScore(mat = pmat$mat, subtype=result, doplot = T)
 
 ```
+
+![The non-cancerous cell infiltration heatmap of colorectal cancer subtypes](D:/3R/00CPDR/vignettes/images/non-cancerous infiltration.png)
 
 ### 2.5 Purification of subgroups 
 ``` {r eval=FALSE,message=FALSE,warning=FALSE,results = "asis"}
@@ -120,15 +134,17 @@ subgroup_simple = lapply(subgroup, function(x){
   })
 })
 
+purify_data = get_puretumor(subgroup = subgroup_simple)
+
 head(subgroup_simple[[1]]$case)
 
 ```
 
-``` {r eval=FALSE,message=TRUE,warning=TRUE}
-purify_data = get_puretumor(subgroup = subgroup_simple)
-
+```{r echo=FALSE}
+load('D:/3R/00CPDR/vignettes/images/subgroup_simple.RData')
+knitr::kable(head(subgroup_simple[[1]]$case),
+             caption = "Subgroup of PT1",digits = 0.1)
 ```
-
 ### 2.6 Differential expression analysis
 ``` {r eval=FALSE,message=FALSE,warning=FALSE}
 signature = get_diff(data = purify_data, 
@@ -137,7 +153,14 @@ signature = get_diff(data = purify_data,
                      threshold_log2foldchange = 2, 
                      threshold_pval = 1, 
                      threshold_adjpval = 0.05)
+head(signature[[1]])[,1:7]
 
+```
+
+```{r echo=FALSE}
+load('D:/3R/00CPDR/vignettes/images/signature.RData')
+knitr::kable(head(signature[[1]])[,1:7],
+             caption = "Inidividual disease signature of PT1")
 ```
 
 ## 3. Screening of candidate agents by reversing signals
@@ -148,8 +171,17 @@ sRGES = lapply(signature, function(x, LINCS){
                            permutations = 10000,
                            LINCS_data = LINCS)) 
   },LINCS = NULL)
+
 gc()
 
+head(sRGES[[1]])
+
+```
+
+```{r echo=FALSE}
+load('D:/3R/00CPDR/vignettes/images/sRGES.RData')
+knitr::kable(head(sRGES[[1]]),
+             caption = "Candidate agents for PT1")
 ```
 
 ## 4. Assessment of drug efficacy
@@ -168,6 +200,8 @@ cor = drugcorTest(mysRGES=sRGES, topline = topline, cell_info = cell_info)
 draw_cor_map(sRGES[[1]],topline[1], cell_info = cell_info)
 
 ```
+
+![The predicted drugs efficacy test in PT1](D:/3R/00CPDR/vignettes/images/PT1.png){width=75%}
 
 # Session information
 Here is the output of sessionInfo on the system where this document was compiled:
