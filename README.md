@@ -45,4 +45,4 @@ results, It is suggested to download the LINCS\_all\_processed data
 
 ## Example and user manual
 
-A Example shows the usecase of screening effective compounds targeting individual patient with colorectal cancer. Please check 'CPDR_user_manual.pdf' in the 'vignitte' folder.
+A Example shows the usecase of screening effective compounds targeting individual patient with colorectal cancer. Please check the 'CPDR_user_manual.pdf' for guidance. The example data can be downloaded from the 'viginitte/images' folder.
