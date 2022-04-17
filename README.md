@@ -43,6 +43,6 @@ By default, CPDR uses LINCS\_978 from octad.db. To acquire reliable
 results, It is suggested to download the LINCS\_all\_processed data
 (6.5Gb) manually from <https://zenodo.org/record/5880026#.YgZos9--uUl>.
 
-## Example
+## Example and user manual
 
-A Example shows the usecase of screening effective compounds targeting individual patient with colorectal cancer. Please use browseVignettes("CPDR") to see the example.
+A Example shows the usecase of screening effective compounds targeting individual patient with colorectal cancer. Please check 'CPDR_user_manual.pdf' in the 'vignitte' folder.
